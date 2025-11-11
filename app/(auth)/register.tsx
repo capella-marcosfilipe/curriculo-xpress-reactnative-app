@@ -6,6 +6,7 @@ import {
     Box,
     Button,
     ButtonText,
+    Center,
     Heading,
     Input,
     InputField,
@@ -44,19 +45,17 @@ export default function RegisterScreen() {
     setSuccess(null);
 
     try {
-      // 1. Chamar a API de registro
       await api.post('/auth/register', {
         name,
         email,
         password,
       });
 
-      // 2. Mostrar sucesso e redirecionar
       setSuccess('Conta criada com sucesso! Redirecionando para o login...');
       
       setTimeout(() => {
         router.push('/login');
-      }, 2000); // Espera 2s para o usuário ler a msg
+      }, 2000);
 
     } catch (err: any) {
       console.error(err);
@@ -76,22 +75,16 @@ export default function RegisterScreen() {
       style={{ flex: 1 }}
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <Box
-          flex={1}
-          justifyContent="center"
-          alignItems="center"
-          p="$5"
-          bg="$backgroundLight"
-        >
-          <VStack space="md" w="$full" py="$10">
-            <Heading size="2xl" color="$textLight">
+        <Center flex={1} p="$5">
+          <VStack space="md" w="$full" maxWidth="$96">
+            <Heading size="2xl" textAlign="center" mb="$4">
               Crie sua conta
             </Heading>
-            <Text color="$textLight">É rápido e fácil.</Text>
+            <Text textAlign="center" mb="$8">É rápido e fácil.</Text>
 
             <Input variant="outline" size="lg">
               <InputField
-                placeholder="Nome Completo"
+                placeholder="Nome"
                 value={name}
                 onChangeText={setName}
                 autoCapitalize="words"
@@ -140,7 +133,7 @@ export default function RegisterScreen() {
               {isLoading ? <Spinner /> : <ButtonText>Registrar</ButtonText>}
             </Button>
 
-            <Box flexDirection="row" justifyContent="center">
+            <Box flexDirection="row" justifyContent="center" mt="$4">
               <Text>Já tem uma conta? </Text>
               <ExpoLink href="/login" asChild>
                 <Link>
@@ -149,7 +142,7 @@ export default function RegisterScreen() {
               </ExpoLink>
             </Box>
           </VStack>
-        </Box>
+        </Center>
       </ScrollView>
     </KeyboardAvoidingView>
   );
