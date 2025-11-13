@@ -1,17 +1,17 @@
 import {
-    Alert,
-    AlertIcon,
-    AlertText,
-    Box,
-    Button,
-    ButtonText,
-    Heading,
-    Input,
-    InputField,
-    Link,
-    LinkText,
-    Text,
-    VStack
+  Alert,
+  AlertIcon,
+  AlertText,
+  Box,
+  Button,
+  ButtonText,
+  Heading,
+  Input,
+  InputField,
+  Link,
+  LinkText,
+  Text,
+  VStack
 } from '@gluestack-ui/themed';
 import { Link as ExpoLink, useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -33,19 +33,50 @@ export default function LoginScreen() {
     try {
       setError('');
       setIsLoading(true);
+
+      console.log('🔐 === INICIANDO LOGIN ===');
+      console.log('📧 Email:', email);
+      console.log('🌐 URL Base:', api.defaults.baseURL);
       
       const response = await api.post('/auth/login', { 
         email, 
         password 
       });
+
+      console.log('✅ === LOGIN BEM-SUCEDIDO ===');
+      console.log('📦 Response completo:', JSON.stringify(response.data, null, 2));
+      console.log('🎟️ Token recebido:', response.data.token?.substring(0, 30) + '...');
       
       await login(response.data.token);
+
+      console.log('💾 Token salvo no Zustand/SecureStore');
+      console.log('🚀 Redirecionando para /(tabs)/...');
+
       router.replace('/(tabs)');
     } catch (err: any) {
-      setError(
-        err.response?.data?.message || 
-        'Erro ao fazer login. Verifique suas credenciais.'
-      );
+      console.error('❌ === ERRO NO LOGIN ===');
+      console.error('Tipo do erro:', err.constructor.name);
+      
+      if (err.response) {
+        // Erro da API (4xx, 5xx)
+        console.error('Status HTTP:', err.response.status);
+        console.error('Response data:', JSON.stringify(err.response.data, null, 2));
+        console.error('Headers:', JSON.stringify(err.response.headers, null, 2));
+        
+        setError(
+          err.response.data?.message || 
+          `Erro ${err.response.status}: ${err.response.statusText}`
+        );
+      } else if (err.request) {
+        // Request foi feito mas sem resposta (timeout, sem internet, etc)
+        console.error('❌ Request feito mas sem resposta');
+        console.error('Request:', err.request);
+        setError('Erro de conexão. Verifique se o backend está acessível.');
+      } else {
+        // Erro antes de fazer o request
+        console.error('❌ Erro ao configurar request:', err.message);
+        setError(`Erro: ${err.message}`);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -100,10 +131,10 @@ export default function LoginScreen() {
 
           <ExpoLink href="/(auth)/register" asChild>
             <Link>
-              <Text color="$textLight">
-                Não tem uma conta?{' '}
-                <LinkText color="$primary">Cadastre-se</LinkText>
-              </Text>
+              <LinkText>
+                <Text color="$textLight">Não tem uma conta?{' '}</Text>
+                <Text color="$primary">Cadastre-se</Text>
+              </LinkText>
             </Link>
           </ExpoLink>
         </VStack>
