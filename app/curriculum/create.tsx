@@ -7,6 +7,8 @@ import {
   Text,
   Input,
   InputField,
+  Textarea,
+  TextareaInput,
   Button,
   ButtonText,
   Alert,
@@ -28,7 +30,7 @@ import { ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { useCreateCurriculum } from '../../hooks/useCurriculums';
-import { useStatements } from '../../hooks/useStatements';
+import { useStatements, useCreateStatement } from '../../hooks/useStatements';
 
 export default function CreateCurriculumScreen() {
   const router = useRouter();
@@ -38,9 +40,45 @@ export default function CreateCurriculumScreen() {
   const [selectedStatementId, setSelectedStatementId] = useState('');
   const [title, setTitle] = useState('');
   const [error, setError] = useState('');
-  
-  // ✅ NOVO: Modal para seleção de statement
+
+  // ✅ FALTAVA ESTE ESTADO!
   const [showStatementModal, setShowStatementModal] = useState(false);
+
+  // Estados para criar statement manual
+  const [showCreateStatementModal, setShowCreateStatementModal] = useState(false);
+  const [newStatementTitle, setNewStatementTitle] = useState('');
+  const [newStatementText, setNewStatementText] = useState('');
+  const [createStatementError, setCreateStatementError] = useState('');
+
+  const createStatementMutation = useCreateStatement();
+
+  const handleCreateManualStatement = async () => {
+    try {
+      setCreateStatementError('');
+
+      if (!newStatementTitle.trim()) {
+        setCreateStatementError('Digite um título');
+        return;
+      }
+      if (!newStatementText.trim()) {
+        setCreateStatementError('Digite o texto do statement');
+        return;
+      }
+
+      const newStatement = await createStatementMutation.mutateAsync({
+        title: newStatementTitle.trim(),
+        text: newStatementText.trim(),
+      });
+
+      // Fecha modal e seleciona automaticamente o statement criado
+      setShowCreateStatementModal(false);
+      setSelectedStatementId(newStatement.id);
+      setNewStatementTitle('');
+      setNewStatementText('');
+    } catch (err: any) {
+      setCreateStatementError(err.response?.data?.message || 'Erro ao criar statement');
+    }
+  };
 
   const handleCreate = async () => {
     try {
@@ -89,7 +127,7 @@ export default function CreateCurriculumScreen() {
               </HStack>
               <Text color="$textLight" fontSize="$sm">
                 Um currículo precisa de um Statement (resumo pessoal). 
-                Selecione um existente ou crie um novo usando a IA!
+                Selecione um existente ou crie um novo!
               </Text>
             </VStack>
 
@@ -115,8 +153,21 @@ export default function CreateCurriculumScreen() {
                   </HStack>
                   <Text color="$textLight">
                     Você precisa criar pelo menos um Statement antes de criar um currículo.
-                    Use a funcionalidade de IA para gerar um!
                   </Text>
+                  
+                  {/* Botão para criar statement manual */}
+                  <Button
+                    onPress={() => setShowCreateStatementModal(true)}
+                    bg="$primary"
+                    size="lg"
+                  >
+                    <HStack space="sm" alignItems="center">
+                      <MaterialIcons name="edit" size={20} color="white" />
+                      <ButtonText>Criar Statement Manual</ButtonText>
+                    </HStack>
+                  </Button>
+
+                  {/* Botão para gerar com IA */}
                   <Button
                     onPress={() => router.push('/ai/generate-statement')}
                     bg="$secondary"
@@ -134,7 +185,7 @@ export default function CreateCurriculumScreen() {
             {/* Formulário (só mostra se tiver statements) */}
             {!loadingStatements && statements && statements.length > 0 && (
               <>
-                {/* ✅ NOVO: Botão para abrir modal de seleção */}
+                {/* Botão para abrir modal de seleção */}
                 <VStack space="sm">
                   <Text color="$textLight" fontWeight="$bold">
                     1. Selecione o Statement (Resumo Pessoal)
@@ -218,11 +269,31 @@ export default function CreateCurriculumScreen() {
                   )}
                 </Button>
 
-                {/* Link para criar Statement */}
-                <Card p="$4" bg="$white" borderRadius="$lg" mt="$2">
+                {/* Link para criar Statement manual */}
+                <Card p="$4" bg="$white" borderRadius="$lg">
                   <VStack space="sm">
                     <Text color="$textLight" fontSize="$sm">
-                      Quer criar um novo Statement personalizado para uma vaga?
+                      Ou crie um novo statement manualmente:
+                    </Text>
+                    <Button
+                      onPress={() => setShowCreateStatementModal(true)}
+                      variant="outline"
+                      borderColor="$primary"
+                      size="md"
+                    >
+                      <HStack space="sm" alignItems="center">
+                        <MaterialIcons name="edit" size={18} color="#5A9EAD" />
+                        <ButtonText color="$primary">Criar Statement Manual</ButtonText>
+                      </HStack>
+                    </Button>
+                  </VStack>
+                </Card>
+
+                {/* Link para criar Statement com IA */}
+                <Card p="$4" bg="$white" borderRadius="$lg">
+                  <VStack space="sm">
+                    <Text color="$textLight" fontSize="$sm">
+                      Ou gere um statement personalizado com IA:
                     </Text>
                     <Button
                       onPress={() => router.push('/ai/generate-statement')}
@@ -243,7 +314,7 @@ export default function CreateCurriculumScreen() {
         </Box>
       </ScrollView>
 
-      {/* ✅ NOVO: Modal de Seleção de Statement */}
+      {/* Modal de Seleção de Statement */}
       <Modal
         isOpen={showStatementModal}
         onClose={() => setShowStatementModal(false)}
@@ -305,6 +376,91 @@ export default function CreateCurriculumScreen() {
             >
               <ButtonText color="$primary">Fechar</ButtonText>
             </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Modal de Criar Statement Manual */}
+      <Modal
+        isOpen={showCreateStatementModal}
+        onClose={() => {
+          setShowCreateStatementModal(false);
+          setNewStatementTitle('');
+          setNewStatementText('');
+          setCreateStatementError('');
+        }}
+      >
+        <ModalBackdrop />
+        <ModalContent>
+          <ModalHeader>
+            <Heading size="lg" color="$primary">
+              Criar Statement Manual
+            </Heading>
+            <ModalCloseButton>
+              <MaterialIcons name="close" size={24} />
+            </ModalCloseButton>
+          </ModalHeader>
+          <ModalBody>
+            <VStack space="md">
+              <Text color="$textLight" fontSize="$sm">
+                Crie um resumo profissional manualmente. Você pode gerar com IA depois.
+              </Text>
+
+              <Input>
+                <InputField
+                  placeholder="Título (ex: Desenvolvedor Full Stack)"
+                  value={newStatementTitle}
+                  onChangeText={setNewStatementTitle}
+                />
+              </Input>
+
+              <Textarea size="md" minHeight={150}>
+                <TextareaInput
+                  placeholder="Escreva seu resumo profissional aqui..."
+                  value={newStatementText}
+                  onChangeText={setNewStatementText}
+                />
+              </Textarea>
+
+              {createStatementError && (
+                <Alert action="error" variant="accent">
+                  <AlertIcon as={MaterialIcons} name="error" mr="$2" />
+                  <AlertText>{createStatementError}</AlertText>
+                </Alert>
+              )}
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <VStack space="sm" width="100%">
+              <Button
+                onPress={handleCreateManualStatement}
+                bg="$primary"
+                size="lg"
+                isDisabled={createStatementMutation.isPending}
+              >
+                {createStatementMutation.isPending ? (
+                  <HStack space="sm" alignItems="center">
+                    <Spinner color="$white" />
+                    <ButtonText>Criando...</ButtonText>
+                  </HStack>
+                ) : (
+                  <ButtonText>Criar Statement</ButtonText>
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                borderColor="$primary"
+                size="lg"
+                onPress={() => {
+                  setShowCreateStatementModal(false);
+                  setNewStatementTitle('');
+                  setNewStatementText('');
+                  setCreateStatementError('');
+                }}
+              >
+                <ButtonText color="$primary">Cancelar</ButtonText>
+              </Button>
+            </VStack>
           </ModalFooter>
         </ModalContent>
       </Modal>
