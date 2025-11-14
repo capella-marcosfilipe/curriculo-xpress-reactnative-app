@@ -298,6 +298,17 @@ export default function CurriculumDetailScreen() {
 
             {/* Botões de Ação */}
             <VStack space="md" mt="$4">
+                <Button
+                    onPress={() => router.push(`/curriculum/add-items?curriculumId=${curriculum.id}`)}
+                    bg="$secondary"
+                    size="lg"
+                    >
+                    <HStack space="sm" alignItems="center">
+                        <MaterialIcons name="add" size={20} color="white" />
+                        <ButtonText>Adicionar Formação/Habilidades</ButtonText>
+                    </HStack>
+                </Button>
+
               <Button bg="$secondary" size="lg">
                 <HStack space="sm" alignItems="center">
                   <MaterialIcons name="edit" size={20} color="white" />

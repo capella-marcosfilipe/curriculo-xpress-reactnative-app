@@ -1,11 +1,6 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
-import { useColorScheme } from 'react-native';
 
-/**
- * Componente helper para ícones das tabs
- * Vamos usar os ícones do FontAwesome que já vem com o Expo
- */
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
@@ -14,12 +9,9 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        // Cores personalizadas da paleta Pavão
         tabBarActiveTintColor: '#5A9EAD', // primary500
         tabBarInactiveTintColor: '#88C0D0', // primary300
         tabBarStyle: {
@@ -43,13 +35,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="sobre"
-        options={{
-          title: 'Sobre',
-          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
-        }}
-      />
-      <Tabs.Screen
         name="academico"
         options={{
           title: 'Acadêmico',
@@ -61,6 +46,13 @@ export default function TabLayout() {
         options={{
           title: 'Profissional',
           tabBarIcon: ({ color }) => <TabBarIcon name="briefcase" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="habilidades"
+        options={{
+          title: 'Habilidades',
+          tabBarIcon: ({ color }) => <TabBarIcon name="star" color={color} />,
         }}
       />
       <Tabs.Screen
