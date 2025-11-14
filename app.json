@@ -43,6 +43,12 @@
         "projectId": "7d1e6f31-b27f-44df-808f-2324ca8d2bb8"
       }
     },
-    "owner": "capella-marcosfilipe"
+    "owner": "capella-marcosfilipe",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/7d1e6f31-b27f-44df-808f-2324ca8d2bb8"
+    }
   }
 }
