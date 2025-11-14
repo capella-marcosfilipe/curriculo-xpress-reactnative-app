@@ -1,24 +1,27 @@
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import {
-    Badge,
-    BadgeText,
-    Box,
-    Button,
-    ButtonText,
-    Card,
-    Divider,
-    HStack,
-    Heading,
-    Modal,
-    ModalBackdrop,
-    ModalBody,
-    ModalCloseButton,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    Spinner,
-    Text,
-    VStack,
+  Box,
+  VStack,
+  HStack,
+  Heading,
+  Text,
+  Spinner,
+  Card,
+  Badge,
+  BadgeText,
+  Divider,
+  Button,
+  ButtonText,
+  Alert,        
+  AlertIcon,    
+  AlertText,  
+  Modal,
+  ModalBackdrop,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
 } from '@gluestack-ui/themed';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -298,24 +301,80 @@ export default function CurriculumDetailScreen() {
 
             {/* Botões de Ação */}
             <VStack space="md" mt="$4">
-                <Button
-                    onPress={() => router.push(`/curriculum/add-items?curriculumId=${curriculum.id}`)}
-                    bg="$secondary"
-                    size="lg"
+              {/* Adicionar Blocos */}
+              <Card p="$4" bg="$white" borderRadius="$lg">
+                <VStack space="md">
+                  <Heading size="md" color="$primary">
+                    Adicionar ao Currículo
+                  </Heading>
+                  <Text color="$textLight" fontSize="$sm">
+                    Crie novos blocos nas abas correspondentes:
+                  </Text>
+                  
+                  <HStack space="sm" flexWrap="wrap">
+                    <Button
+                      onPress={() => router.push('/(tabs)/academico')}
+                      bg="$primary"
+                      size="sm"
+                      flex={1}
+                      minWidth="45%"
                     >
-                    <HStack space="sm" alignItems="center">
-                        <MaterialIcons name="add" size={20} color="white" />
-                        <ButtonText>Adicionar Formação/Habilidades</ButtonText>
-                    </HStack>
-                </Button>
+                      <HStack space="xs" alignItems="center">
+                        <MaterialIcons name="school" size={16} color="white" />
+                        <ButtonText fontSize="$xs">Formações</ButtonText>
+                      </HStack>
+                    </Button>
 
-              <Button bg="$secondary" size="lg">
-                <HStack space="sm" alignItems="center">
-                  <MaterialIcons name="edit" size={20} color="white" />
-                  <ButtonText>Editar Currículo</ButtonText>
-                </HStack>
-              </Button>
+                    <Button
+                      onPress={() => router.push('/(tabs)/profissional')}
+                      bg="$primary"
+                      size="sm"
+                      flex={1}
+                      minWidth="45%"
+                    >
+                      <HStack space="xs" alignItems="center">
+                        <MaterialIcons name="work" size={16} color="white" />
+                        <ButtonText fontSize="$xs">Experiências</ButtonText>
+                      </HStack>
+                    </Button>
+
+                    <Button
+                      onPress={() => router.push('/(tabs)/habilidades')}
+                      bg="$primary"
+                      size="sm"
+                      flex={1}
+                      minWidth="45%"
+                    >
+                      <HStack space="xs" alignItems="center">
+                        <MaterialIcons name="star" size={16} color="white" />
+                        <ButtonText fontSize="$xs">Habilidades</ButtonText>
+                      </HStack>
+                    </Button>
+
+                    <Button
+                      onPress={() => router.push('/(tabs)/projetos')}
+                      bg="$primary"
+                      size="sm"
+                      flex={1}
+                      minWidth="45%"
+                    >
+                      <HStack space="xs" alignItems="center">
+                        <MaterialIcons name="code" size={16} color="white" />
+                        <ButtonText fontSize="$xs">Projetos</ButtonText>
+                      </HStack>
+                    </Button>
+                  </HStack>
+
+                  <Alert action="info" variant="solid" mt="$2">
+                    <AlertIcon as={MaterialIcons} name="info" mr="$2" />
+                    <AlertText fontSize="$xs">
+                      Após criar os blocos nas abas, eles aparecerão aqui automaticamente.
+                    </AlertText>
+                  </Alert>
+                </VStack>
+              </Card>
               
+              {/* Botão de Deletar */}
               <Button
                 variant="outline"
                 borderColor="$error600"
@@ -328,6 +387,7 @@ export default function CurriculumDetailScreen() {
                 </HStack>
               </Button>
             </VStack>
+
           </VStack>
         </Box>
       </ScrollView>
