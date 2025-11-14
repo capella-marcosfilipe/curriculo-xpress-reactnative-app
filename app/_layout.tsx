@@ -16,7 +16,19 @@ export const unstable_settings = {
 };
 
 SplashScreen.preventAutoHideAsync();
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: (failureCount, error: any) => {
+        if (error?.response?.status === 401 || error?.response?.status === 403) {
+          return false;
+        }
+        return failureCount < 2;
+      },
+      staleTime: 1000 * 60 * 5,
+    },
+  },
+});
 
 const DEBUG_MODE = false; // Caso precise visualizar sem proteger a rota.
 
@@ -76,8 +88,31 @@ function RootLayoutNav() {
         <Stack>
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
+          <Stack.Screen 
+            name="curriculum/[id]" 
+            options={{ 
+              headerShown: false,
+              presentation: 'card'
+            }} 
+          />
+          <Stack.Screen 
+            name="curriculum/create" 
+            options={{ 
+              headerShown: false,
+              presentation: 'card'
+            }} 
+          />
+          <Stack.Screen 
+            name="ai/generate-statement" 
+            options={{ 
+              headerShown: false,
+              presentation: 'card'
+            }} 
+          />
+          
           <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-        </Stack>
+          </Stack>
       </GluestackUIProvider>
     </QueryClientProvider>
   );
