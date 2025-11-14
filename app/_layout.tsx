@@ -97,6 +97,13 @@ function RootLayoutNav() {
             }} 
           />
           <Stack.Screen 
+            name="curriculum/[id]/edit-blocks" 
+            options={{ 
+              headerShown: false,
+              presentation: 'card'
+            }} 
+          />
+          <Stack.Screen 
             name="curriculum/create" 
             options={{ 
               headerShown: false,
