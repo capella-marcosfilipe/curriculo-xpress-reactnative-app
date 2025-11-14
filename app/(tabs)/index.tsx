@@ -91,6 +91,18 @@ export default function HomeScreen() {
             </HStack>
           </Button>
 
+          {/* Botão de Gerar Resumo com IA */}
+          <Button
+            onPress={() => router.push('/ai/generate-statement')}
+            bg="$secondary"
+            size="lg"
+          >
+            <HStack space="sm" alignItems="center">
+              <MaterialIcons name="auto-awesome" size={20} color="white" />
+              <ButtonText>Gerar Resumo com IA</ButtonText>
+            </HStack>
+          </Button>
+
           {/* Lista de currículos */}
           {curriculums && curriculums.length > 0 ? (
             <VStack space="md" mt="$2">
